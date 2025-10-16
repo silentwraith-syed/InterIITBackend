@@ -1,12 +1,47 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+provider = "prisma-client-js"
 }
 
+
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+provider = "sqlite"
+url = env("DATABASE_URL")
+}
+
+
+model User {
+id String @id @default(cuid())
+name String
+email String @unique
+avatar String?
+createdAt DateTime @default(now())
+posts Post[]
+comments Comment[]
+}
+
+
+model Post {
+id String @id @default(cuid())
+title String
+body String
+image String?
+createdAt DateTime @default(now())
+author User @relation(fields: [authorId], references: [id])
+authorId String
+comments Comment[]
+}
+
+
+model Comment {
+id String @id @default(cuid())
+text String
+upvotes Int @default(0)
+createdAt DateTime @default(now())
+user User @relation(fields: [userId], references: [id])
+userId String
+post Post @relation(fields: [postId], references: [id])
+postId String
+parent Comment? @relation("CommentToComment", fields: [parentId], references: [id])
+parentId String?
+children Comment[] @relation("CommentToComment")
 }
