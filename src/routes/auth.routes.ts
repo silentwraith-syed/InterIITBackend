@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { login } from "../controllers/auth.controller";
-
+import { requestOtp, verifyOtp } from "../controllers/auth.controller";
 
 const router = Router();
-router.post("/login", login); // domain-based demo login
+router.post("/request-otp", requestOtp);
+router.post("/verify-otp", verifyOtp);
+
 export default router;

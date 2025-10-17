@@ -4,8 +4,8 @@ provider = "prisma-client-js"
 
 
 datasource db {
-provider = "sqlite"
-url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 
@@ -44,4 +44,14 @@ postId String
 parent Comment? @relation("CommentToComment", fields: [parentId], references: [id])
 parentId String?
 children Comment[] @relation("CommentToComment")
+}
+
+model Otp {
+  id         String   @id @default(cuid())
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([email])
 }

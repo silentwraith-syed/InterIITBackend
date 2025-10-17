@@ -4,11 +4,11 @@ const prisma = new PrismaClient();
 
 async function main() {
 const [riya, ava, arjun, zara, kabir, admin] = await Promise.all([
-prisma.user.upsert({ where: { email: "riya@iit.ac.in" }, update: {}, create: { name: "Riya Sen", email: "riya@iit.ac.in", avatar: "https://i.pravatar.cc/150?img=10" } }),
-prisma.user.upsert({ where: { email: "ava@iit.ac.in" }, update: {}, create: { name: "Ava Rao", email: "ava@iit.ac.in", avatar: "https://i.pravatar.cc/150?img=11" } }),
-prisma.user.upsert({ where: { email: "arjun@iit.ac.in" }, update: {}, create: { name: "Arjun Mehta", email: "arjun@iit.ac.in", avatar: "https://i.pravatar.cc/150?img=12" } }),
-prisma.user.upsert({ where: { email: "zara@iit.ac.in" }, update: {}, create: { name: "Zara Kapoor", email: "zara@iit.ac.in", avatar: "https://i.pravatar.cc/150?img=13" } }),
-prisma.user.upsert({ where: { email: "kabir@iit.ac.in" }, update: {}, create: { name: "Kabir Iyer", email: "kabir@iit.ac.in", avatar: "https://i.pravatar.cc/150?img=14" } }),
+prisma.user.upsert({ where: { email: "riya@kgpian.iitkgp.ac.in" }, update: {}, create: { name: "Riya Sen", email: "riya@kgpian.iitkgp.ac.in", avatar: "https://i.pravatar.cc/150?img=10" } }),
+prisma.user.upsert({ where: { email: "ava@kgpian.iitkgp.ac.in" }, update: {}, create: { name: "Ava Rao", email: "ava@kgpian.iitkgp.ac.in", avatar: "https://i.pravatar.cc/150?img=11" } }),
+prisma.user.upsert({ where: { email: "arjun@kgpian.iitkgp.ac.in" }, update: {}, create: { name: "Arjun Mehta", email: "arjun@kgpian.iitkgp.ac.in", avatar: "https://i.pravatar.cc/150?img=12" } }),
+prisma.user.upsert({ where: { email: "zara@kgpian.iitkgp.ac.in" }, update: {}, create: { name: "Zara Kapoor", email: "zara@kgpian.iitkgp.ac.in", avatar: "https://i.pravatar.cc/150?img=13" } }),
+prisma.user.upsert({ where: { email: "kabir@kgpian.iitkgp.ac.in" }, update: {}, create: { name: "Kabir Iyer", email: "kabir@kgpian.iitkgp.ac.in", avatar: "https://i.pravatar.cc/150?img=14" } }),
 prisma.user.upsert({ where: { email: "admin@interiit.org" }, update: {}, create: { name: "Admin", email: "admin@interiit.org", avatar: "https://i.pravatar.cc/150?img=15" } }),
 ]);
 
