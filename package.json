@@ -10,8 +10,12 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
+    "migrate-prod" : "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "seed": "ts-node-dev --transpile-only prisma/seed.ts"
+  },
+  "engines": {
+    "node": ">=18 <=22"
   },
   "dependencies": {
     "@prisma/client": "^6.17.1",
