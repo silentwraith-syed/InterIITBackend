@@ -218,6 +218,35 @@ npm run build
 npm start
 ```
 
+### **Docker Deployment**
+
+#### **Test Locally with Docker Compose**
+```bash
+# Build and start all services (PostgreSQL + API)
+docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d
+
+# Stop services
+docker-compose down
+```
+
+#### **Deploy to Railway**
+
+1. **Create Railway Account** at [railway.app](https://railway.app/)
+2. **Create New Project** from GitHub repository
+3. **Add PostgreSQL Database** (Railway plugin)
+4. **Set Environment Variables:**
+   ```env
+   JWT_SECRET=your-super-secret-jwt-key
+   ALLOWED_DOMAINS=kgpian.iitkgp.ac.in,interiit.org
+   NODE_ENV=production
+   ```
+5. **Deploy** - Railway auto-detects Dockerfile and deploys
+
+📖 **Full Railway deployment guide:** See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)
+
 ---
 
 ## 📡 API Documentation

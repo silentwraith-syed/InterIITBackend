@@ -1,0 +1,17 @@
+node_modules
+dist
+.env
+.env.local
+.git
+.gitignore
+*.md
+npm-debug.log
+.vscode
+.idea
+coverage
+.DS_Store
+*.log
+test-auth.js
+SENDGRID_SETUP.md
+SMTP_FIX.md
+RENDER_DEPLOYMENT.md
