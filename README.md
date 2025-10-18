@@ -37,10 +37,10 @@
 
 ## 🌟 Overview
 
-**KGPTalks** is a community-driven discussion platform designed specifically for the IIT Kharagpur ecosystem. The backend provides a secure, performant API that powers threaded discussions with nested commenting, user authentication via OTP, and real-time engagement features.
+**KGPTalks** is a community-driven discussion platform designed specifically for the IIT Kharagpur ecosystem. The backend provides a secure, performant API that powers threaded discussions with nested commenting, user authentication, and real-time engagement features.
 
 This backend handles:
-- ✅ Secure OTP-based email authentication
+- ✅ Secure email/password authentication
 - ✅ Domain-restricted access (`kgpian.iitkgp.ac.in`)
 - ✅ Nested comment threads with unlimited depth
 - ✅ Post management with rich content support
@@ -53,10 +53,10 @@ This backend handles:
 ## ✨ Features
 
 ### 🔐 Authentication & Security
-- **OTP-Based Email Authentication**: Passwordless login system using 6-digit OTP codes
+- **Email/Password Authentication**: Simple registration and login with bcrypt password hashing
 - **Domain Whitelisting**: Restricted access to `kgpian.iitkgp.ac.in` and `interiit.org` domains
 - **JWT Tokens**: Secure, stateless authentication with 7-day expiration
-- **Password Hashing**: Bcrypt-based OTP code hashing for security
+- **Password Hashing**: Bcrypt-based password encryption with salt rounds
 - **Protected Routes**: Middleware-based route protection
 
 ### 💬 Discussion Features
@@ -71,11 +71,6 @@ This backend handles:
 - **Comprehensive Error Handling**: Centralized error middleware
 - **Input Sanitization**: Protection against malicious inputs
 - **Type Safety**: Full TypeScript coverage
-
-### 📧 Email Integration
-- **Nodemailer Integration**: Automated OTP delivery via SMTP
-- **Gmail Support**: Pre-configured for Gmail SMTP
-- **Customizable Templates**: Professional email formatting
 
 ---
 
@@ -93,16 +88,12 @@ This backend handles:
 
 ### **Authentication & Security**
 - **JSON Web Tokens (JWT)** - Stateless authentication
-- **bcryptjs** - Password/OTP hashing
+- **bcryptjs** - Password hashing
 - **jsonwebtoken** - JWT generation and verification
 
 ### **Validation & Type Safety**
 - **Zod** - Runtime schema validation
 - **TypeScript** - Compile-time type checking
-
-### **Email & Communication**
-- **Nodemailer** - Email delivery service
-- **SendGrid** - Production email provider (100 emails/day free)
 
 ### **Development Tools**
 - **ts-node-dev** - Fast TypeScript development with hot reload
@@ -121,7 +112,7 @@ This backend handles:
 ```
 src/
 ├── controllers/          # Request handlers
-│   ├── auth.controller.ts      # OTP request/verify
+│   ├── auth.controller.ts      # Register/Login
 │   ├── posts.controller.ts     # Post CRUD operations
 │   └── comments.controller.ts  # Comment CRUD + upvotes
 ├── routes/              # API route definitions
@@ -134,8 +125,7 @@ src/
 │   └── error.ts              # Error handler
 ├── lib/                 # Utility functions
 │   ├── auth.ts               # JWT helpers
-│   ├── crypto.ts             # Hashing & OTP generation
-│   ├── mailer.ts             # Email configuration
+│   ├── crypto.ts             # Password hashing
 │   └── prisma.ts             # Database client
 ├── validators/          # Zod schemas
 │   ├── comment.schema.ts
@@ -168,12 +158,6 @@ prisma/
 - Upvote counter for engagement
 - Belongs to User and Post
 
-#### **OTP**
-- Time-limited one-time passwords
-- Hashed codes for security
-- 10-minute expiration window
-- Indexed by email for fast lookups
-
 ---
 
 ## 🚀 Getting Started
@@ -182,7 +166,6 @@ prisma/
 - Node.js 18+ 
 - PostgreSQL 14+ (or SQLite for development)
 - npm or yarn
-- SMTP email service (Gmail recommended)
 
 ### **Installation**
 
@@ -208,24 +191,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/kgptalks"
 JWT_SECRET="your-super-secret-jwt-key"
 ALLOWED_DOMAINS="kgpian.iitkgp.ac.in,interiit.org"
 PORT=4000
-
-# Email Configuration
-# For Production (Render): Use SendGrid
-SMTP_HOST=smtp.sendgrid.net
-SMTP_PORT=587
-SMTP_USER=apikey
-SMTP_PASS=SG.your-sendgrid-api-key
-SMTP_FROM=your-verified-email
-
-# For Local Development: Use Gmail (optional)
-# SMTP_HOST=smtp.gmail.com
-# SMTP_PORT=587
-# SMTP_USER=your-email@gmail.com
-# SMTP_PASS=your-app-password
-# SMTP_FROM=your-email@gmail.com
 ```
-
-> **Note:** For production deployment on Render, you **must** use SendGrid as Gmail SMTP is blocked. See [Deployment](#deployment) section.
 
 4. **Set up the database**
 ```bash
@@ -271,35 +237,15 @@ Returns server status.
 
 ### **Authentication Endpoints**
 
-#### **Request OTP**
+#### **Register**
 ```http
-POST /api/auth/request-otp
+POST /api/auth/register
 Content-Type: application/json
 
 {
   "email": "user@kgpian.iitkgp.ac.in",
+  "password": "your-secure-password",
   "name": "John Doe" (optional)
-}
-```
-
-**Response:**
-```json
-{
-  "ok": true
-}
-```
-Sends a 6-digit OTP code to the email address.
-
----
-
-#### **Verify OTP**
-```http
-POST /api/auth/verify-otp
-Content-Type: application/json
-
-{
-  "email": "user@kgpian.iitkgp.ac.in",
-  "code": "123456"
 }
 ```
 
@@ -316,6 +262,41 @@ Content-Type: application/json
   }
 }
 ```
+Creates a new user account. Email must be from an allowed domain (`kgpian.iitkgp.ac.in` or `interiit.org`).
+
+---
+
+#### **Login**
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@kgpian.iitkgp.ac.in",
+  "password": "your-secure-password"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "clx123abc",
+    "name": "John Doe",
+    "email": "user@kgpian.iitkgp.ac.in",
+    "avatar": null,
+    "createdAt": "2025-10-17T10:30:00.000Z"
+  }
+}
+```
+
+**Demo Credentials:**
+All test users have password: `password123`
+- riya@kgpian.iitkgp.ac.in
+- ava@kgpian.iitkgp.ac.in
+- arjun@kgpian.iitkgp.ac.in
+- admin@interiit.org
 
 ---
 
@@ -435,16 +416,28 @@ POST /api/comments/:id/upvote
 Authorization: Bearer <token>
 ```
 
+**Behavior:**
+- First click: Adds upvote (upvotes +1, returns `upvoted: true`)
+- Second click: Removes upvote (upvotes -1, returns `upvoted: false`)
+- Each user can only upvote once per comment (toggle on/off)
+
 **Response:**
 ```json
 {
   "id": "clx789",
   "text": "Great discussion!",
   "upvotes": 13,
+  "upvoted": true,
   "createdAt": "2025-10-17T11:00:00.000Z",
   "userId": "clx456",
   "postId": "clx123",
-  "parentId": null
+  "parentId": null,
+  "user": {
+    "id": "clx456",
+    "name": "John Doe",
+    "email": "user@kgpian.iitkgp.ac.in",
+    "avatar": "https://i.pravatar.cc/150?img=10"
+  }
 }
 ```
 
@@ -457,10 +450,12 @@ model User {
   id        String    @id @default(cuid())
   name      String
   email     String    @unique
+  password  String
   avatar    String?
   createdAt DateTime  @default(now())
   posts     Post[]
   comments  Comment[]
+  upvotedComments CommentUpvote[]
 }
 
 model Post {
@@ -486,15 +481,20 @@ model Comment {
   parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
   parentId  String?
   children  Comment[] @relation("CommentToComment")
+  upvotedBy CommentUpvote[]
 }
 
-model Otp {
+model CommentUpvote {
   id        String   @id @default(cuid())
-  email     String
-  codeHash  String
-  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
   createdAt DateTime @default(now())
-  @@index([email])
+
+  @@unique([userId, commentId])
+  @@index([commentId])
+  @@index([userId])
 }
 ```
 
@@ -508,10 +508,6 @@ model Otp {
 | `JWT_SECRET` | Secret key for JWT signing | `supersecret_kgptalks_2025` |
 | `ALLOWED_DOMAINS` | Comma-separated allowed email domains | `kgpian.iitkgp.ac.in,interiit.org` |
 | `PORT` | Server port | `4000` |
-| `SMTP_HOST` | SMTP server hostname | `smtp.gmail.com` |
-| `SMTP_PORT` | SMTP server port | `465` (SSL) or `587` (TLS) |
-| `SMTP_USER` | SMTP authentication username | `your-email@gmail.com` |
-| `SMTP_PASS` | SMTP authentication password | `your-app-password` |
 
 ---
 

@@ -13,10 +13,12 @@ model User {
 id String @id @default(cuid())
 name String
 email String @unique
+password String
 avatar String?
 createdAt DateTime @default(now())
 posts Post[]
 comments Comment[]
+upvotedComments CommentUpvote[]
 }
 
 
@@ -44,14 +46,18 @@ postId String
 parent Comment? @relation("CommentToComment", fields: [parentId], references: [id])
 parentId String?
 children Comment[] @relation("CommentToComment")
+upvotedBy CommentUpvote[]
 }
 
-model Otp {
-  id         String   @id @default(cuid())
-  email      String
-  codeHash   String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+model CommentUpvote {
+id String @id @default(cuid())
+user User @relation(fields: [userId], references: [id])
+userId String
+comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+commentId String
+createdAt DateTime @default(now())
 
-  @@index([email])
+@@unique([userId, commentId])
+@@index([commentId])
+@@index([userId])
 }

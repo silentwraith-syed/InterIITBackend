@@ -2,86 +2,85 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { env } from "../env";
 import { signToken } from "../lib/auth";
-import { transporter } from "../lib/mailer";
-import { gen6, hashCode, verifyCode } from "../lib/crypto";
+import { hashCode, verifyCode } from "../lib/crypto";
 
-// POST /api/auth/request-otp  { email, name? }
-export async function requestOtp(req: Request, res: Response) {
-  const { email, name } = req.body as { email: string; name?: string };
-  if (!email) return res.status(400).json({ error: "Email required" });
+// POST /api/auth/register  { email, password, name? }
+export async function register(req: Request, res: Response) {
+  const { email, password, name } = req.body as { email: string; password: string; name?: string };
+  
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
+  }
 
   const domain = email.split("@")[1]?.toLowerCase();
-  // optional domain allowlist (keep or remove)
-  if (!domain || !env.ALLOWED_DOMAINS.includes(domain)) return res.status(403).json({ error: "Domain not allowed" });
+  if (!domain || !env.ALLOWED_DOMAINS.includes(domain)) {
+    return res.status(403).json({ error: "Domain not allowed" });
+  }
 
-  const code = gen6();
-  const codeHash = hashCode(code);
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  // Check if user already exists
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    return res.status(400).json({ error: "User already exists" });
+  }
 
-  await prisma.otp.create({ data: { email, codeHash, expiresAt } });
+  // Hash password
+  const passwordHash = hashCode(password);
 
-  // ensure user exists (so verify can issue token)
-  const updateData: { name?: string } = {};
-  if (name) updateData.name = name;
-  
-  await prisma.user.upsert({
-    where: { email },
-    update: updateData,
-    create: { email, name: name || email.split("@")[0] || "User" },
+  // Create user
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password: passwordHash,
+      name: name || email.split("@")[0] || "User",
+    },
   });
 
-  // send email with error handling
-  try {
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER || "syed.ahmed@gyws.org",
-      to: email,
-      subject: "Your KGPTalks Login Code",
-      text: `Your code is ${code}. It expires in 10 minutes.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>Welcome to KGPTalks!</h2>
-          <p>Your login code is:</p>
-          <h1 style="background: #f0f0f0; padding: 20px; text-align: center; letter-spacing: 5px;">${code}</h1>
-          <p>This code will expire in 10 minutes.</p>
-          <p>If you didn't request this code, please ignore this email.</p>
-          <hr>
-          <p style="color: #666; font-size: 12px;">KGPTalks - IIT Kharagpur Discussion Platform</p>
-        </div>
-      `
-    });
-    
-    console.log(`✅ OTP sent to ${email}`);
-    res.json({ ok: true });
-  } catch (error) {
-    console.error('❌ Email sending failed:', error);
-    
-    // Still return success but log the error
-    // In production, you might want to return an error or use a fallback method
-    res.json({ 
-      ok: true, 
-      warning: 'OTP generated but email delivery may be delayed. Please check your inbox in a few moments.' 
-    });
-  }
+  // Generate token
+  const token = signToken({ sub: user.id, email: user.email, name: user.name });
+
+  res.status(201).json({
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+    },
+  });
 }
 
-// POST /api/auth/verify-otp { email, code }
-export async function verifyOtp(req: Request, res: Response) {
-  const { email, code } = req.body as { email: string; code: string };
-  if (!email || !code) return res.status(400).json({ error: "Email and code required" });
+// POST /api/auth/login { email, password }
+export async function login(req: Request, res: Response) {
+  const { email, password } = req.body as { email: string; password: string };
 
-  // find latest unexpired OTP
-  const record = await prisma.otp.findFirst({
-    where: { email, expiresAt: { gt: new Date() } },
-    orderBy: { createdAt: "desc" },
-  });
-  if (!record) return res.status(400).json({ error: "Invalid or expired code" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
+  }
 
-  const ok = verifyCode(code, record.codeHash);
-  if (!ok) return res.status(400).json({ error: "Invalid code" });
-
+  // Find user
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
 
+  // Verify password
+  const isValid = verifyCode(password, user.password);
+  if (!isValid) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
+
+  // Generate token
   const token = signToken({ sub: user.id, email: user.email, name: user.name });
-  res.json({ token, user });
+
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+    },
+  });
 }
