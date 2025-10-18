@@ -5,22 +5,20 @@ import { errorHandler } from "./middleware/error";
 
 
 const app = express();
-app.use(cors());
+
+// CORS - Allow all origins (including Vercel)
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 app.use("/api", api);
 app.use(errorHandler);
-const allowed = process.env.FRONTEND_URL?.split(",").map(s => s.trim()) || ["http://localhost:5173"];
-app.use(cors({ origin: allowed, methods: ["GET","POST","PATCH","DELETE","OPTIONS"] }));
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://inter-iit-frontend.vercel.app',  // Add your Vercel URL
-    'https://*.vercel.app'  // Allow all Vercel preview deployments
-  ],
-  credentials: true
-}));
+
 export default app;

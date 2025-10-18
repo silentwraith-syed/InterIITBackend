@@ -27,16 +27,13 @@
 
 ## 🚀 Live Demo
 
-**Production API:** [https://interiitbackend.onrender.com](https://interiitbackend.onrender.com) *(Update with Railway URL after deployment)*
+**Production API:** [https://interiitbackend-production.up.railway.app](https://interiitbackend-production.up.railway.app)
 
-**Health Check:** [https://interiitbackend.onrender.com/health](https://interiitbackend.onrender.com/health)
+**Health Check:** [https://interiitbackend-production.up.railway.app/health](https://interiitbackend-production.up.railway.app/health)
 
-**Status:** ✅ Live and Running
+**Frontend:** [https://inter-iit-frontend.vercel.app](https://inter-iit-frontend.vercel.app)
 
-**📖 Deployment Guides:**
-- [🚀 Complete Deployment Guide](DEPLOYMENT_GUIDE.md) - Step-by-step for Railway + Vercel
-- [⚡ Quick Deploy Checklist](QUICK_DEPLOY.md) - Fast track (10 minutes)
-- [🚂 Railway Detailed Guide](RAILWAY_DEPLOYMENT.md) - Backend deployment only
+**Status:** ✅ Live and Running on Railway + Vercel
 
 ---
 
@@ -82,12 +79,12 @@ This backend handles:
 ## 🛠️ Tech Stack
 
 ### **Core Framework**
-- **Node.js** - Runtime environment
+- **Node.js 20** - Runtime environment
 - **Express.js** - Web application framework
 - **TypeScript** - Type-safe JavaScript
 
 ### **Database & ORM**
-- **PostgreSQL** - Production database
+- **PostgreSQL** - Production database (Railway hosted)
 - **Prisma ORM** - Type-safe database client
 - **Prisma Migrate** - Database migration management
 
@@ -104,6 +101,13 @@ This backend handles:
 - **ts-node-dev** - Fast TypeScript development with hot reload
 - **Prisma Studio** - Visual database browser
 - **dotenv** - Environment variable management
+- **Docker** - Containerization for deployment
+- **Docker Compose** - Multi-container orchestration
+
+### **Deployment & Infrastructure**
+- **Railway** - Backend hosting platform
+- **Vercel** - Frontend hosting (for connected apps)
+- **Docker** - Container runtime
 
 ### **Additional Libraries**
 - **cors** - Cross-origin resource sharing
@@ -237,28 +241,18 @@ docker-compose up -d
 docker-compose down
 ```
 
-#### **Deploy to Railway**
-
-1. **Create Railway Account** at [railway.app](https://railway.app/)
-2. **Create New Project** from GitHub repository
-3. **Add PostgreSQL Database** (Railway plugin)
-4. **Set Environment Variables:**
-   ```env
-   JWT_SECRET=your-super-secret-jwt-key
-   ALLOWED_DOMAINS=kgpian.iitkgp.ac.in,interiit.org
-   NODE_ENV=production
-   ```
-5. **Deploy** - Railway auto-detects Dockerfile and deploys
-
-📖 **Full Railway deployment guide:** See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)
-
----
-
 ## 📡 API Documentation
 
 ### **Base URL**
+
+**Local Development:**
 ```
 http://localhost:4000/api
+```
+
+**Production (Railway):**
+```
+https://interiitbackend-production.up.railway.app/api
 ```
 
 ### **Health Check**
@@ -324,13 +318,6 @@ Content-Type: application/json
   }
 }
 ```
-
-**Demo Credentials:**
-All test users have password: `password123`
-- riya@kgpian.iitkgp.ac.in
-- ava@kgpian.iitkgp.ac.in
-- arjun@kgpian.iitkgp.ac.in
-- admin@interiit.org
 
 ---
 
@@ -582,9 +569,40 @@ InterIITBackend/
 | `npm run build` | Compile TypeScript to JavaScript |
 | `npm start` | Run production server |
 | `npm run prisma:generate` | Generate Prisma Client |
-| `npm run prisma:migrate` | Run database migrations |
+| `npm run prisma:migrate` | Run database migrations (dev) |
+| `npm run migrate-prod` | Run database migrations (production) |
 | `npm run prisma:studio` | Open Prisma Studio (DB GUI) |
 | `npm run seed` | Seed database with sample data |
+| `npm run docker:build` | Build Docker image locally |
+| `npm run docker:up` | Start app with Docker Compose |
+| `npm run docker:down` | Stop Docker containers |
+| `npm run docker:logs` | View Docker logs |
+
+---
+
+## 🚢 Production Deployment
+
+### **Backend - Railway**
+- Hosted on [Railway](https://railway.app/)
+- Automatic deployments from GitHub
+- PostgreSQL database included
+- Environment variables configured
+- Zero-downtime deployments
+
+### **Frontend - Vercel**
+- Connected to Railway backend
+- Automatic preview deployments
+- Optimized builds and caching
+- Edge network CDN
+
+### **Features**
+- ✅ Dockerized deployment
+- ✅ Database migrations on deploy
+- ✅ Health monitoring
+- ✅ Automatic HTTPS
+- ✅ CORS configured for cross-origin requests
+- ✅ JWT authentication working
+- ✅ Domain restriction active
 
 ---
 
@@ -604,16 +622,30 @@ This project is licensed under the **MIT License**.
 
 **Syed Mehran Ahmed**
 - GitHub: [@silentwraith-syed](https://github.com/silentwraith-syed)
+- Email: syed.ahmed@gyws.org
 - Project: KGPTalks Backend API
+- Repository: [InterIITBackend](https://github.com/silentwraith-syed/InterIITBackend)
 
 ---
 
 ## 🙏 Acknowledgments
 
-- IIT Kharagpur community
-- Inter IIT Tech Meet 14.0
-- All contributors and testers
+- **IIT Kharagpur community** - For inspiration and requirements
+- **Inter IIT Tech Meet 14.0** - Competition framework
+- **Railway** - For excellent hosting platform
+- **Vercel** - For frontend hosting
+- All contributors and testers who helped improve this project
+
+---
+
+## 🔗 Links
+
+- **Backend API:** [https://interiitbackend-production.up.railway.app](https://interiitbackend-production.up.railway.app)
+- **Frontend App:** [https://inter-iit-frontend.vercel.app](https://inter-iit-frontend.vercel.app)
+- **GitHub Repo:** [github.com/silentwraith-syed/InterIITBackend](https://github.com/silentwraith-syed/InterIITBackend)
 
 ---
 
 **Built with ❤️ for the IIT KGP community**
+
+**Powered by:** Railway (Backend) | Vercel (Frontend) | PostgreSQL (Database)
