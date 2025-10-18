@@ -33,9 +33,9 @@ export async function requestOtp(req: Request, res: Response) {
   // send email with error handling
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_USER || "no-reply@kgptalks.com",
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || "syed.ahmed@gyws.org",
       to: email,
-      subject: "Your KGPTalks login code",
+      subject: "Your KGPTalks Login Code",
       text: `Your code is ${code}. It expires in 10 minutes.`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">

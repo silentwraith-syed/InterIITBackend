@@ -9,16 +9,29 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Live Demo](#live-demo)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
+- [Deployment](#deployment)
 - [API Documentation](#api-documentation)
 - [Database Schema](#database-schema)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
 - [Scripts](#scripts)
+- [Troubleshooting](#troubleshooting)
 - [License](#license)
+
+---
+
+## 🚀 Live Demo
+
+**Production API:** [https://interiitbackend.onrender.com](https://interiitbackend.onrender.com)
+
+**Health Check:** [https://interiitbackend.onrender.com/health](https://interiitbackend.onrender.com/health)
+
+**Status:** ✅ Live and Running
 
 ---
 
@@ -89,6 +102,7 @@ This backend handles:
 
 ### **Email & Communication**
 - **Nodemailer** - Email delivery service
+- **SendGrid** - Production email provider (100 emails/day free)
 
 ### **Development Tools**
 - **ts-node-dev** - Fast TypeScript development with hot reload
@@ -195,12 +209,23 @@ JWT_SECRET="your-super-secret-jwt-key"
 ALLOWED_DOMAINS="kgpian.iitkgp.ac.in,interiit.org"
 PORT=4000
 
-# SMTP Configuration (Gmail example)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+# Email Configuration
+# For Production (Render): Use SendGrid
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_USER=apikey
+SMTP_PASS=SG.your-sendgrid-api-key
+SMTP_FROM=your-verified-email
+
+# For Local Development: Use Gmail (optional)
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USER=your-email@gmail.com
+# SMTP_PASS=your-app-password
+# SMTP_FROM=your-email@gmail.com
 ```
+
+> **Note:** For production deployment on Render, you **must** use SendGrid as Gmail SMTP is blocked. See [Deployment](#deployment) section.
 
 4. **Set up the database**
 ```bash
