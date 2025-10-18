@@ -20,18 +20,23 @@
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
 - [Scripts](#scripts)
-- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 - [License](#license)
 
 ---
 
 ## 🚀 Live Demo
 
-**Production API:** [https://interiitbackend.onrender.com](https://interiitbackend.onrender.com)
+**Production API:** [https://interiitbackend.onrender.com](https://interiitbackend.onrender.com) *(Update with Railway URL after deployment)*
 
 **Health Check:** [https://interiitbackend.onrender.com/health](https://interiitbackend.onrender.com/health)
 
 **Status:** ✅ Live and Running
+
+**📖 Deployment Guides:**
+- [🚀 Complete Deployment Guide](DEPLOYMENT_GUIDE.md) - Step-by-step for Railway + Vercel
+- [⚡ Quick Deploy Checklist](QUICK_DEPLOY.md) - Fast track (10 minutes)
+- [🚂 Railway Detailed Guide](RAILWAY_DEPLOYMENT.md) - Backend deployment only
 
 ---
 
